@@ -1,0 +1,43 @@
+name: Exercise 04 build with cache
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: cache
+        uses: actions/cache@v4.0.2
+        with:
+          path: ~/.npm
+          key: buildCache
+
+      - name: NPM CI
+        run: npm ci
+
+      - name: NPM Test Coverage
+        run: npm test -- --coverage
+        env:
+          CI: true
+
+      - name: Upload code coverage
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: code-coverage
+          path: coverage
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload build artifacts.
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: build
+          path: build
+          
+      
+          
